@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06080d">
+<meta name="description" content="Cuaderno de Avery: antídoto de la plateada y lista de experimentos.">
+<title>Antídoto de la plateada · Clase XXXXX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,600;0,6..96,800;1,6..96,500&family=Courier+Prime:wght@400;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
+<style>
+/* ======================================================
+   Base compartida
+   ====================================================== */
+:root{
+  --plata:#b7c1cf;
+  --plata-luz:#f1f5fb;
+  --plata-sombra:#5a6575;
+  --display:'Bodoni Moda','Didot','Bodoni 72',Georgia,serif;
+  --mono:'Courier Prime','Courier New',monospace;
+  --mano:'Reenie Beanie','Bradley Hand','Segoe Script',cursive;
+  --barra:3.5rem;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:#06080d;-webkit-text-size-adjust:100%}
+body{margin:0;background:#06080d;font-family:var(--mono);overflow-x:hidden}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+a,button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--plata-luz);outline-offset:3px;border-radius:2px}
+
+.vista{
+  display:block;isolation:isolate;
+  min-height:100svh;
+  padding-bottom:calc(var(--barra) + env(safe-area-inset-bottom));
+}
+.vista[hidden]{display:none}
+
+/* ======================================================
+   Solapas (barra inferior)
+   ====================================================== */
+.solapas{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  display:flex;
+  height:calc(var(--barra) + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  background:linear-gradient(180deg,rgba(8,11,17,.84),rgba(5,7,11,.97));
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-top:1px solid rgba(183,193,207,.22);
+}
+.solapa{
+  flex:1;position:relative;
+  appearance:none;background:none;border:0;cursor:pointer;
+  min-height:44px;
+  font-family:var(--display);font-style:italic;font-weight:500;font-size:1.15rem;
+  color:var(--plata-sombra);
+  transition:color .25s ease;
+}
+.solapa+.solapa{border-left:1px solid rgba(183,193,207,.14)}
+.solapa::before{
+  content:"";position:absolute;top:-1px;left:50%;width:2.4rem;height:3px;margin-left:-1.2rem;
+  border-radius:0 0 99px 99px;
+  background:linear-gradient(90deg,var(--plata-sombra),var(--plata-luz),var(--plata-sombra));
+  transform:scaleX(0);transition:transform .3s ease;
+}
+.solapa[aria-selected="true"]{color:var(--plata-luz)}
+.solapa[aria-selected="true"]::before{transform:scaleX(1)}
+
+/* ======================================================
+   Solapa 1: Antídoto de la plateada
+   ====================================================== */
+.v-antidoto{
+  --noche:#06080d;
+  --tinta:#d2d9e4;
+  --tinta-tenue:#8793a5;
+  --alba:#f0b86e;
+  color:var(--tinta);
+  font-size:1.0625rem;
+  line-height:1.7;
+  background:
+    radial-gradient(900px 520px at 50% -8%,#151c2b 0%,transparent 70%),
+    var(--noche);
+}
+
+/* plata que gotea sobre toda la pantalla */
+.lluvia{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:40}
+.drip{position:absolute;top:0;left:var(--x);width:var(--w)}
+.drip .line{
+  position:absolute;top:0;left:0;width:100%;height:0;
+  background:linear-gradient(90deg,var(--plata-sombra),var(--plata-luz) 40%,var(--plata) 62%,var(--plata-sombra));
+  border-radius:0 0 999px 999px;
+  box-shadow:0 0 8px rgba(200,215,235,.22);
+  animation:estira var(--t) var(--dl) infinite cubic-bezier(.4,.05,.5,1);
+}
+.drip .line::after{
+  content:"";position:absolute;left:50%;bottom:calc(var(--w)*-1.15);
+  width:calc(var(--w)*1.8);height:calc(var(--w)*2.4);margin-left:calc(var(--w)*-.9);
+  border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
+  background:radial-gradient(circle at 35% 28%,#fff 0 10%,var(--plata) 42%,var(--plata-sombra) 100%);
+  animation:perla var(--t) var(--dl) infinite linear;
+}
+.drip .gota{
+  position:absolute;left:50%;top:0;
+  width:calc(var(--w)*1.8);height:calc(var(--w)*2.4);margin-left:calc(var(--w)*-.9);
+  border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
+  background:radial-gradient(circle at 35% 28%,#fff 0 10%,var(--plata) 42%,var(--plata-sombra) 100%);
+  opacity:0;
+  animation:cae var(--t) var(--dl) infinite linear;
+}
+@keyframes estira{
+  0%{height:0}
+  62%{height:var(--h)}
+  63.5%{height:calc(var(--h)*.55)}
+  66%{height:8px}
+  100%{height:0}
+}
+@keyframes perla{
+  0%,4%{opacity:0}
+  10%,62%{opacity:1}
+  63%,100%{opacity:0}
+}
+@keyframes cae{
+  0%,62%{opacity:0;transform:translateY(var(--h))}
+  62.5%{opacity:1;transform:translateY(var(--h));animation-timing-function:cubic-bezier(.55,0,.95,.55)}
+  100%{opacity:var(--oe,.95);transform:translateY(var(--fall,118vh))}
+}
+
+/* la hoja */
+.hoja{
+  position:relative;
+  max-width:34rem;
+  margin:0 auto;
+  padding:0 1.25rem 0 2.6rem;
+}
+.hoja::before{
+  content:"";position:absolute;top:0;bottom:0;left:1.6rem;width:1px;
+  background:linear-gradient(180deg,transparent,rgba(183,193,207,.35) 8%,rgba(183,193,207,.35) 96%,transparent);
+}
+.hoja::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:repeating-linear-gradient(180deg,transparent 0 1.78rem,rgba(183,193,207,.055) 1.78rem calc(1.78rem + 1px));
+}
+
+/* portada */
+.portada{
+  min-height:calc(100svh - var(--barra) - env(safe-area-inset-bottom));
+  padding-top:max(2.2rem,env(safe-area-inset-top));
+  display:flex;flex-direction:column;
+}
+.sello{
+  align-self:flex-start;
+  border:2px solid var(--plata-sombra);
+  color:var(--plata);
+  padding:.25rem .7rem .3rem;
+  transform:rotate(-3deg);
+  font-weight:700;
+  font-size:.82rem;
+  line-height:1.35;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.procedencia{margin:1.6rem 0 0;color:var(--tinta-tenue);font-size:.95rem;max-width:24rem}
+.titulo{
+  position:relative;
+  margin:1.1rem 0 0;
+  font-family:var(--display);
+  font-weight:800;
+  font-size:clamp(3rem,15.5vw,4.6rem);
+  line-height:.94;
+  letter-spacing:-.015em;
+  background:linear-gradient(104deg,#6f7a8b 0%,#fff 22%,#aab5c4 42%,#f4f8fd 58%,#7a8697 78%,#dfe6f0 100%);
+  background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  animation:fluye 1.9s cubic-bezier(.5,0,.2,1) both,brilla 9s linear 1.9s infinite;
+}
+.titulo-wrap{position:relative}
+.titulo-gotas{position:absolute;left:0;right:0;bottom:-.2rem;height:0;pointer-events:none}
+@keyframes fluye{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(-20% -5% -30% -5%)}}
+@keyframes brilla{from{background-position:0 0}to{background-position:-220% 0}}
+.subtitulo{
+  margin:1.5rem 0 0;
+  font-family:var(--display);
+  font-style:italic;
+  font-weight:500;
+  font-size:1.45rem;
+  line-height:1.3;
+  color:var(--plata);
+}
+.frasco-zona{margin:auto 0 0;padding:2rem 0 2.2rem;display:flex;align-items:flex-end;gap:1rem}
+.frasco{
+  appearance:none;background:none;border:0;padding:.4rem;margin:-.4rem;cursor:pointer;
+  width:min(46vw,10.5rem);flex:0 0 auto;
+}
+.frasco svg{display:block;width:100%;height:auto;overflow:visible}
+.frasco.agita svg{animation:agita .55s ease}
+@keyframes agita{20%{transform:rotate(-5deg)}45%{transform:rotate(4deg)}70%{transform:rotate(-2deg)}}
+.ola{animation:ola 3.6s linear infinite}
+.ola.b{animation-duration:5.4s;animation-direction:reverse;opacity:.55}
+@keyframes ola{to{transform:translateX(-60px)}}
+.nota-mano{
+  font-family:var(--mano);
+  font-size:1.65rem;
+  line-height:1.05;
+  color:#cfd8e6;
+  transform:rotate(-3deg);
+}
+.frasco-zona .nota-mano{padding-bottom:1.4rem;max-width:9rem}
+
+/* apartados */
+.apartado{padding:2.4rem 0 .6rem}
+.apartado h2{
+  margin:0 0 1rem;
+  font-family:var(--display);
+  font-style:italic;
+  font-weight:500;
+  font-size:1.9rem;
+  line-height:1.15;
+  color:var(--plata-luz);
+}
+.apartado p{margin:0 0 1rem;max-width:30rem}
+
+/* ventana de aplicación */
+.ventana{margin:1.6rem 0 .5rem}
+.ventana-barra{position:relative;height:12px;border-radius:99px;background:rgba(183,193,207,.1);overflow:hidden}
+.ventana-relleno{position:absolute;inset:0;background:linear-gradient(90deg,var(--plata-sombra),var(--plata) 55%,var(--alba))}
+.ventana-marca{
+  position:absolute;top:-3px;bottom:-3px;left:0;width:18px;border-radius:99px;
+  background:radial-gradient(circle,#fff 0 30%,rgba(255,255,255,.2) 70%,transparent 72%);
+  animation:avanza 26s linear infinite;
+}
+@keyframes avanza{from{left:-2%}to{left:96%}}
+.ventana-alba{position:absolute;right:0;top:0;bottom:0;width:30%;background:radial-gradient(circle at 100% 50%,rgba(240,184,110,.9),transparent 70%);animation:late 3.4s ease-in-out infinite}
+@keyframes late{50%{opacity:.45}}
+.ventana-rotulos{display:flex;justify-content:space-between;margin-top:.55rem;font-size:.9rem;color:var(--tinta-tenue)}
+
+/* componentes */
+.lista-comp{list-style:none;margin:0;padding:0}
+.lista-comp li{padding:1rem 0 1.05rem;border-top:1px solid rgba(183,193,207,.2)}
+.lista-comp li:last-child{border-bottom:1px solid rgba(183,193,207,.2)}
+.lista-comp strong{display:block;font-family:var(--display);font-size:1.3rem;font-weight:600;color:var(--plata-luz);line-height:1.2;margin-bottom:.15rem}
+.lista-comp p{margin:0;font-size:1rem}
+.tachado{
+  appearance:none;display:block;width:100%;text-align:left;
+  background:none;border:0;padding:.55rem 0;margin:.2rem 0 0;cursor:pointer;min-height:48px;
+}
+.tachado .barras{
+  display:inline-block;max-width:100%;
+  padding:.1rem .5rem;
+  background:linear-gradient(90deg,#1c2330,#2a3342 50%,#1c2330);
+  color:transparent;text-shadow:0 0 0 #000;
+  border-radius:2px;
+  letter-spacing:.05em;
+  box-shadow:inset 0 0 0 1px rgba(183,193,207,.18);
+}
+.tachado .pista{display:block;margin-top:.15rem;font-family:var(--mano);font-size:1.4rem;color:var(--plata);line-height:1}
+.revelado{margin:.4rem 0 0}
+.revelado[hidden]{display:none}
+.revelado .nota-mano{display:block;margin:.2rem 0 .3rem;animation:aparece .7s ease both}
+.revelado .nota-mano+.nota-mano{margin-left:.6rem}
+@keyframes aparece{from{opacity:0;filter:blur(6px);transform:translateY(-4px) rotate(-3deg)}to{opacity:1;filter:none;transform:rotate(-3deg)}}
+
+/* pasos */
+.pasos{list-style:none;margin:0;padding:0;counter-reset:paso;position:relative}
+.pasos li{position:relative;counter-increment:paso;padding:0 0 1.5rem 2.8rem;margin:0}
+.pasos li::before{
+  content:counter(paso);
+  position:absolute;left:0;top:-.05rem;
+  width:2rem;height:2rem;border-radius:50%;
+  display:grid;place-items:center;
+  font-family:var(--display);font-weight:600;font-size:1.05rem;color:var(--noche);
+  background:radial-gradient(circle at 35% 30%,#fff 0 12%,var(--plata) 48%,var(--plata-sombra));
+}
+.pasos li::after{content:"";position:absolute;left:calc(1rem - 1px);top:2.1rem;bottom:.1rem;width:2px;background:linear-gradient(180deg,var(--plata-sombra),transparent)}
+.pasos li:last-child{padding-bottom:.4rem}
+.pasos li:last-child::after{display:none}
+
+.efectos{list-style:none;margin:0;padding:0}
+.efectos li{margin:0 0 .9rem;padding-left:1.2rem;position:relative;max-width:30rem}
+.efectos li::before{content:"";position:absolute;left:0;top:.68em;width:.45rem;height:.45rem;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:var(--plata)}
+
+.margen{display:block;margin:1.1rem 0 .2rem;max-width:20rem}
+
+/* cierre */
+.cierre{padding:3rem 0 0;text-align:left}
+.cierre .sello{display:inline-block}
+.charco{
+  position:relative;height:5.5rem;margin:2rem -1.25rem 0 -2.6rem;
+  background:
+    radial-gradient(60% 100% at 18% 0,var(--plata) 0 55%,transparent 56%),
+    radial-gradient(70% 100% at 62% 0,var(--plata-luz) 0 48%,transparent 49%),
+    radial-gradient(50% 100% at 94% 0,var(--plata) 0 52%,transparent 53%),
+    linear-gradient(180deg,var(--plata) 0%,var(--plata-sombra) 100%);
+  border-radius:50% 50% 0 0/1.6rem 1.6rem 0 0;
+  overflow:hidden;
+}
+.charco::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-120%);animation:barrido 7s ease-in-out infinite}
+@keyframes barrido{55%,100%{transform:translateX(120%)}}
+
+@media (min-width:700px){
+  .v-antidoto{font-size:1.125rem}
+  .hoja{max-width:38rem}
+}
+
+/* ======================================================
+   Solapa 2: Lista de experimentos
+   ====================================================== */
+.v-lista{
+  --pared:#080b11;
+  --pared-alta:#121826;
+  --papel:#d9dde4;
+  --papel-viejo:#c3c9d3;
+  --tinta:#141925;
+  color:var(--plata);
+  font-size:1rem;line-height:1.6;
+  background:
+    radial-gradient(800px 480px at 50% -6%,var(--pared-alta) 0%,transparent 72%),
+    repeating-linear-gradient(90deg,rgba(183,193,207,.022) 0 2px,transparent 2px 9px),
+    var(--pared);
+}
+.v-lista :focus-visible{outline-offset:4px}
+.pared{
+  max-width:46rem;margin:0 auto;
+  padding:max(2.4rem,env(safe-area-inset-top)) 1.1rem 1.5rem;
+}
+.v-lista h1{
+  margin:0;
+  font-family:var(--display);font-style:italic;font-weight:600;
+  font-size:clamp(2.6rem,13vw,4.4rem);
+  line-height:.98;letter-spacing:-.01em;
+  color:var(--plata-luz);
+  text-wrap:balance;
+}
+.pie{margin:1rem 0 0;color:var(--plata-sombra);font-size:.95rem;max-width:22rem}
+
+.fichas{
+  list-style:none;margin:2.6rem 0 0;padding:0;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1.9rem 1.15rem;
+}
+@media (min-width:620px){.fichas{grid-template-columns:repeat(3,minmax(0,1fr));gap:2.2rem 1.4rem}}
+.fichas>li:nth-child(even){margin-top:1.1rem}
+
+.ficha{
+  position:relative;
+  min-height:10.5rem;
+  padding:1.55rem .85rem 1rem;
+  color:var(--tinta);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.28),transparent 22%),
+    linear-gradient(172deg,var(--papel),var(--papel-viejo));
+  transform:rotate(var(--r,0deg));
+  box-shadow:0 1px 0 rgba(255,255,255,.35) inset,0 12px 22px -6px rgba(0,0,0,.75),0 2px 4px rgba(0,0,0,.5);
+  transition:transform .25s ease;
+  overflow:hidden;
+}
+.ficha::before{
+  content:"";position:absolute;top:.5rem;left:50%;width:.7rem;height:.7rem;margin-left:-.35rem;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff 0 14%,var(--plata) 46%,var(--plata-sombra) 100%);
+  box-shadow:0 2px 3px rgba(0,0,0,.55);
+}
+.borroso{
+  filter:blur(3.4px);
+  opacity:.82;
+  user-select:none;-webkit-user-select:none;
+  pointer-events:none;
+}
+.borroso p{margin:0;font-size:.82rem;line-height:1.45;white-space:nowrap;overflow:hidden}
+.borroso .cod{font-weight:700;font-size:.95rem;margin-bottom:.35rem}
+
+.ficha.sacude{animation:sacude .5s ease}
+@keyframes sacude{25%{transform:rotate(calc(var(--r,0deg) - 2.6deg)) translateY(-2px)}60%{transform:rotate(calc(var(--r,0deg) + 2deg))}}
+
+/* tachadura */
+.cruz{position:absolute;inset:0;width:100%;height:100%}
+.cruz path{
+  fill:none;stroke:var(--tinta);stroke-width:4.4;stroke-linecap:round;
+  stroke-dasharray:1;stroke-dashoffset:1;opacity:0;
+}
+.dibuja .cruz path{opacity:1;animation:traza .55s cubic-bezier(.5,0,.3,1) forwards}
+.dibuja .cruz path:nth-child(2){animation-delay:.5s}
+@keyframes traza{to{stroke-dashoffset:0}}
+
+/* la ficha con un solo dato */
+.unica{
+  background:
+    repeating-linear-gradient(180deg,transparent 0 1.55rem,rgba(20,25,37,.13) 1.55rem calc(1.55rem + 1px)),
+    linear-gradient(180deg,rgba(255,255,255,.34),transparent 24%),
+    linear-gradient(172deg,#e2e6ec,#cfd5de);
+  box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 16px 26px -6px rgba(0,0,0,.85),0 2px 4px rgba(0,0,0,.5);
+}
+.mano{
+  margin:.4rem 0 0;
+  font-family:var(--mano);
+  font-size:2.05rem;line-height:1.02;
+  color:var(--tinta);
+  overflow-wrap:anywhere;
+}
+
+/* ======================================================
+   Movimiento reducido
+   ====================================================== */
+@media (prefers-reduced-motion:reduce){
+  .drip .line{animation:none;height:calc(var(--h)*.3)}
+  .drip .line::after{animation:none;opacity:1}
+  .drip .gota{display:none}
+  .titulo{animation:none}
+  .ola,.ventana-marca,.ventana-alba,.charco::after{animation:none}
+  .ventana-marca{left:48%}
+  .revelado .nota-mano{animation:none}
+  .frasco.agita svg{animation:none}
+  .cruz path{stroke-dashoffset:0;opacity:1;animation:none!important}
+  .ficha.sacude{animation:none}
+  .solapa::before{transition:none}
+}
+</style>
+</head>
+<body>
+
+<main>
+
+  <!-- ================= Solapa 1: Antídoto de la plateada ================= -->
+  <section class="vista v-antidoto" id="p-antidoto" role="tabpanel" aria-labelledby="t-antidoto">
+
+    <div class="lluvia" id="lluvia" aria-hidden="true"></div>
+
+    <div class="hoja">
+
+      <header class="portada">
+        <div class="sello">Confiscado<br>Clase XXXXX</div>
+        <p class="procedencia">Cuaderno de Avery, rama rusa.<br>Original en ruso, traducción interna.</p>
+
+        <div class="titulo-wrap">
+          <h1 class="titulo">Antídoto de la plateada</h1>
+          <div class="titulo-gotas" id="tituloGotas" aria-hidden="true"></div>
+        </div>
+        <p class="subtitulo">Fórmula única.<br>Un solo frasco.</p>
+
+        <div class="frasco-zona">
+          <button class="frasco" id="frasco" type="button" aria-label="Frasco del antídoto. Tócalo para hacerlo gotear.">
+            <svg viewBox="0 0 120 170" role="img" aria-hidden="true">
+              <defs>
+                <clipPath id="cuerpo"><path d="M47 24H73V54C73 63 100 80 100 118C100 145 83 158 60 158C37 158 20 145 20 118C20 80 47 63 47 54Z"/></clipPath>
+                <linearGradient id="liq" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#f1f5fb"/><stop offset=".45" stop-color="#b7c1cf"/><stop offset="1" stop-color="#5a6575"/>
+                </linearGradient>
+              </defs>
+              <rect x="45" y="6" width="30" height="17" rx="3" fill="#2b313d" stroke="#5a6575" stroke-width="1"/>
+              <path d="M47 24H73V54C73 63 100 80 100 118C100 145 83 158 60 158C37 158 20 145 20 118C20 80 47 63 47 54Z" fill="rgba(183,193,207,.07)" stroke="#8793a5" stroke-width="1.6"/>
+              <g clip-path="url(#cuerpo)">
+                <path class="ola b" d="M-120 114q15-7 30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0V170H-120Z" fill="url(#liq)"/>
+                <path class="ola" d="M-120 118q15-7 30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0V170H-120Z" fill="url(#liq)"/>
+              </g>
+              <path d="M33 100C33 88 38 80 45 72" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <p class="nota-mano">toca el frasco. es el único.</p>
+        </div>
+      </header>
+
+      <section class="apartado" aria-labelledby="h-cuando">
+        <h2 id="h-cuando">Cuándo se da</h2>
+        <p>Contra la plateada ya asentada en la sangre. Una sola toma, completa.</p>
+        <div class="ventana" role="img" aria-label="La ventana va desde la última toma hasta el amanecer.">
+          <div class="ventana-barra">
+            <div class="ventana-relleno"></div>
+            <div class="ventana-alba"></div>
+            <div class="ventana-marca"></div>
+          </div>
+          <div class="ventana-rotulos"><span>última toma</span><span>amanecer</span></div>
+        </div>
+        <p>Vale desde la última toma hasta el amanecer siguiente. Después, la plata cierra su ciclo y ya no hay vuelta atrás completa.</p>
+        <p class="nota-mano margen">pasado el amanecer no insistas. no sirve.</p>
+      </section>
+
+      <section class="apartado" aria-labelledby="h-lleva">
+        <h2 id="h-lleva">Lo que lleva</h2>
+        <ul class="lista-comp">
+          <li>
+            <strong>Base clara</strong>
+            <p>Una medida, de la cámara fría. Fuera del frío pierde cuerpo en una hora.</p>
+          </li>
+          <li>
+            <strong>Fijador inverso</strong>
+            <p>El fijador de sangre de la casa, destilado en sentido contrario hasta que suelte la plata que tenía prendida.</p>
+          </li>
+          <li>
+            <strong>Tercer componente</strong>
+            <button class="tachado" id="tachado" type="button" aria-expanded="false" aria-controls="revelado">
+              <span class="barras" aria-hidden="true">████████ ██████ ███</span>
+              <span class="pista" id="pista">tachado. toca para leer lo que queda.</span>
+            </button>
+            <div class="revelado" id="revelado" hidden>
+              <span class="nota-mano">no se anota. va directo al frasco.</span>
+              <span class="nota-mano">sin él, la plata sale de la sangre pero no del núcleo.</span>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="apartado" aria-labelledby="h-hace">
+        <h2 id="h-hace">Cómo se hace</h2>
+        <ol class="pasos">
+          <li>Sacar la base de la cámara fría. Tiene que verse espesa, casi lechosa.</li>
+          <li>Verter el fijador inverso gota a gota, sin remover. La mezcla se enturbia y se vuelve plateada.</li>
+          <li>Agregar el tercer componente en el frasco, no en la mezcla. Tapar al instante.</li>
+          <li>Dar tres dedos de una sola vez, con la sujeto dormida o quieta. No se repite.</li>
+        </ol>
+        <p class="nota-mano margen">el frasco se queda en la cámara fría hasta que haga falta.</p>
+      </section>
+
+      <section class="apartado" aria-labelledby="h-efecto">
+        <h2 id="h-efecto">Qué hace</h2>
+        <ul class="efectos">
+          <li>La plata retrocede de las venas, de las manos hacia el pecho.</li>
+          <li>El sangrado plateado cede en minutos. El frío en las manos tarda días.</li>
+          <li>Si falta el tercer componente, parte de la plata queda atrapada en la fractura del núcleo.</li>
+        </ul>
+      </section>
+
+      <footer class="cierre">
+        <div class="sello">Fin de la copia<br>Clase XXXXX</div>
+        <div class="charco" aria-hidden="true"></div>
+      </footer>
+
+    </div>
+  </section>
+
+  <!-- ================= Solapa 2: Lista de experimentos ================= -->
+  <section class="vista v-lista" id="p-lista" role="tabpanel" aria-labelledby="t-lista" hidden>
+    <div class="pared">
+      <h1>Lista de experimentos</h1>
+      <p class="pie">Pared del laboratorio de la costa.</p>
+
+    <ul class="fichas" id="fichas">
+          <li class="ficha" style="--r:-2.2deg">
+            <div class="borroso" aria-hidden="true">
+              <p class="cod">Drakri.-6</p>
+              <p>kri: zolnox 7</p>
+              <p>qua: 17</p>
+              <p>pha: ul</p>
+              <p>nox: 6</p>
+              <p>renqua: 11</p>
+            </div>
+            <span class="sr-only">Ficha ilegible.</span>
+          </li>
+          <li class="ficha" style="--r:1.6deg">
+            <div class="borroso" aria-hidden="true">
+              <p class="cod">Dordra.-10</p>
+              <p>kriash: 2</p>
+              <p>mirqua: zolost 5</p>
+              <p>dor: tandrador</p>
+              <p>lumost: venkri 4</p>
+              <p>pha: 4</p>
+            </div>
+            <span class="sr-only">Ficha ilegible.</span>
+          </li>
+          <li class="ficha" style="--r:-1.1deg">
+            <div class="borroso" aria-hidden="true">
+              <p class="cod">Quamir.-8</p>
+              <p>kridor: drapha</p>
+              <p>nox: quavenvel</p>
+              <p>dor: ulberpha</p>
+              <p>zolqua: phapha 2</p>
+              <p>ber: berlum</p>
+            </div>
+            <span class="sr-only">Ficha ilegible.</span>
+          </li>
+          <li class="ficha tachada" style="--r:2.4deg">
+            <div class="borroso" aria-hidden="true">
+              <p class="cod">Mirber.-9</p>
+              <p>vel: berdra 8</p>
+              <p>dra: drazolven</p>
+              <p>mor: ostven</p>
+              <p>mor: rentan 4</p>
+              <p>ithkri: dorulven</p>
+            </div>
+            <svg class="cruz" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path pathLength="1" d="M9 14 C34 34 62 62 91 90"/><path pathLength="1" d="M90 9 C64 36 36 64 10 91"/></svg>
+            <span class="sr-only">Ficha ilegible, tachada con una cruz.</span>
+          </li>
+          <li class="ficha" style="--r:-2.8deg">
+            <div class="borroso" aria-hidden="true">
+              <p class="cod">Ithren.-11</p>
+              <p>ith: 24</p>
+              <p>ostith: mirash 7</p>
+              <p>uldra: tanven</p>
+              <p>kri: lummorost</p>
+              <p>lumpha: tansek 7</p>
+            </div>
+            <span class="sr-only">Ficha ilegible.</span>
+          </li>
+          <li class="ficha" style="--r:1.2deg">
+            <div class="borroso" aria-hidden="true">
+              <p class="cod">Krisek.-4</p>
+              <p>ulven: phavelmir</p>
+              <p>vel: mor</p>
+              <p>zol: qua</p>
+              <p>ulkri: ithren</p>
+              <p>sekmir: mortan 1</p>
+            </div>
+            <span class="sr-only">Ficha ilegible.</span>
+          </li>
+          <li class="ficha unica" style="--r:0deg">
+            <p class="mano">G.-7, custodia: C.</p>
+          </li>
+          <li class="ficha" style="--r:-1.7deg">
+            <div class="borroso" aria-hidden="true">
+              <p class="cod">Ashlum.-11</p>
+              <p>vel: ith</p>
+              <p>mor: ultan 9</p>
+              <p>draqua: 21</p>
+              <p>tan: 24</p>
+              <p>zol: tanlumost</p>
+            </div>
+            <span class="sr-only">Ficha ilegible.</span>
+          </li>
+          <li class="ficha" style="--r:2.1deg">
+            <div class="borroso" aria-hidden="true">
+              <p class="cod">Velost.-9</p>
+              <p>zolzol: berzol 9</p>
+              <p>kri: mirrenul</p>
+              <p>ven: 11</p>
+              <p>zolber: ithith 1</p>
+              <p>ulost: 5</p>
+            </div>
+            <span class="sr-only">Ficha ilegible.</span>
+          </li>
+          <li class="ficha tachada" style="--r:-1.3deg">
+            <div class="borroso" aria-hidden="true">
+              <p class="cod">Lumash.-3</p>
+              <p>zol: rensekdra</p>
+              <p>qua: zolvel 4</p>
+              <p>dra: venkri 5</p>
+              <p>ber: quasek 3</p>
+              <p>venith: vendor 8</p>
+            </div>
+            <svg class="cruz" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path pathLength="1" d="M9 14 C34 34 62 62 91 90"/><path pathLength="1" d="M90 9 C64 36 36 64 10 91"/></svg>
+            <span class="sr-only">Ficha ilegible, tachada con una cruz.</span>
+          </li>
+          <li class="ficha" style="--r:1.9deg">
+            <div class="borroso" aria-hidden="true">
+              <p class="cod">Tanqua.-2</p>
+              <p>dra: ashul 2</p>
+              <p>lum: quaberash</p>
+              <p>dra: zolren 1</p>
+              <p>quaul: krikri 7</p>
+              <p>lumdra: 15</p>
+            </div>
+            <span class="sr-only">Ficha ilegible.</span>
+          </li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<nav class="solapas" role="tablist" aria-label="Secciones del cuaderno">
+  <button class="solapa" id="t-antidoto" role="tab" type="button" aria-selected="true" aria-controls="p-antidoto" data-solapa="antidoto">Antídoto</button>
+  <button class="solapa" id="t-lista" role="tab" type="button" aria-selected="false" aria-controls="p-lista" data-solapa="lista" tabindex="-1">Experimentos</button>
+</nav>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function rnd(a,b){return a+Math.random()*(b-a)}
+
+  /* =====================================================
+     Antídoto: plata que gotea
+     ===================================================== */
+  function gotear(host,n,o){
+    var frag=document.createDocumentFragment();
+    for(var i=0;i<n;i++){
+      var d=document.createElement('div');
+      d.className='drip';
+      var w=rnd(o.wMin,o.wMax), h=rnd(o.hMin,o.hMax), t=rnd(o.tMin,o.tMax);
+      d.style.setProperty('--x',((i+rnd(.1,.9))/n*100).toFixed(2)+'%');
+      d.style.setProperty('--w',w.toFixed(1)+'px');
+      d.style.setProperty('--h',h.toFixed(0)+'px');
+      d.style.setProperty('--t',t.toFixed(1)+'s');
+      d.style.setProperty('--dl',(-rnd(0,t)).toFixed(1)+'s');
+      if(o.fall) d.style.setProperty('--fall',o.fall);
+      if(o.oe!=null) d.style.setProperty('--oe',o.oe);
+      d.innerHTML='<i class="line"></i><i class="gota"></i>';
+      frag.appendChild(d);
+    }
+    host.appendChild(frag);
+  }
+
+  var ancho = window.innerWidth;
+  gotear(document.getElementById('lluvia'), ancho>700?15:8,
+    {wMin:2.6,wMax:6.5,hMin:70,hMax:210,tMin:7,tMax:13});
+  gotear(document.getElementById('tituloGotas'), ancho>700?9:6,
+    {wMin:2.2,wMax:4.2,hMin:14,hMax:46,tMin:6,tMax:10,fall:'70px',oe:0});
+
+  /* tachado: toca para leer */
+  var btn=document.getElementById('tachado'),
+      rev=document.getElementById('revelado'),
+      pista=document.getElementById('pista');
+  btn.addEventListener('click',function(){
+    var abierto=btn.getAttribute('aria-expanded')==='true';
+    btn.setAttribute('aria-expanded',String(!abierto));
+    rev.hidden=abierto;
+    pista.textContent=abierto?'tachado. toca para leer lo que queda.':'tocar de nuevo lo vuelve a tachar.';
+  });
+
+  /* frasco: ráfaga de gotas */
+  var frasco=document.getElementById('frasco');
+  frasco.addEventListener('click',function(){
+    frasco.classList.remove('agita'); void frasco.offsetWidth; frasco.classList.add('agita');
+    if(reduce || !document.body.animate) return;
+    var r=frasco.getBoundingClientRect();
+    var x0=r.left+r.width*.5, y0=r.top+r.height*.14;
+    for(var i=0;i<7;i++){
+      (function(i){
+        var s=document.createElement('i');
+        var w=rnd(5,10);
+        s.style.cssText='position:fixed;z-index:45;pointer-events:none;left:'+(x0+rnd(-14,14))+'px;top:'+y0+'px;width:'+w+'px;height:'+(w*1.35)+'px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:radial-gradient(circle at 35% 28%,#fff 0 10%,#b7c1cf 42%,#5a6575 100%);';
+        document.body.appendChild(s);
+        var dist=window.innerHeight-y0+30;
+        var a=s.animate([
+          {transform:'translateY(0) scale(.6)',opacity:0},
+          {transform:'translateY(6px) scale(1)',opacity:1,offset:.12},
+          {transform:'translateY('+dist+'px) scale(1)',opacity:.95}
+        ],{duration:rnd(1100,2000),delay:i*90,easing:'cubic-bezier(.55,0,.95,.55)',fill:'both'});
+        a.onfinish=function(){s.remove()};
+      })(i);
+    }
+  });
+
+  /* =====================================================
+     Experimentos: las cruces y las fichas
+     ===================================================== */
+  var lista = document.getElementById('fichas');
+  var pendientes = Array.prototype.slice.call(lista.querySelectorAll('.tachada'));
+  var esperando = false;
+  function revisar(){
+    esperando = false;
+    var alto = window.innerHeight || document.documentElement.clientHeight;
+    pendientes = pendientes.filter(function(t){
+      var r = t.getBoundingClientRect();
+      if (r.height > 0 && r.top < alto * .85 && r.bottom > alto * .15) { t.classList.add('dibuja'); return false; }
+      return true;
+    });
+    if (!pendientes.length) {
+      window.removeEventListener('scroll', pedir);
+      window.removeEventListener('resize', pedir);
+    }
+  }
+  function pedir(){ if (!esperando) { esperando = true; requestAnimationFrame(revisar); } }
+  window.addEventListener('scroll', pedir, {passive:true});
+  window.addEventListener('resize', pedir);
+
+  lista.addEventListener('click', function(ev){
+    var f = ev.target.closest('.ficha');
+    if (!f) return;
+    f.classList.remove('sacude'); void f.offsetWidth; f.classList.add('sacude');
+  });
+
+  /* =====================================================
+     Solapas
+     ===================================================== */
+  var solapas = {
+    antidoto:{boton:document.getElementById('t-antidoto'),panel:document.getElementById('p-antidoto'),titulo:'Antídoto de la plateada · Clase XXXXX'},
+    lista:{boton:document.getElementById('t-lista'),panel:document.getElementById('p-lista'),titulo:'Lista de experimentos · Clase XXXXX'}
+  };
+  var orden = ['antidoto','lista'];
+  var posicion = {antidoto:0,lista:0};
+  var actual = null;
+
+  function mostrar(nombre, enfocar){
+    if (!solapas[nombre] || actual === nombre) return;
+    if (actual) posicion[actual] = window.pageYOffset;
+    orden.forEach(function(k){
+      var s = solapas[k], on = (k === nombre);
+      s.panel.hidden = !on;
+      s.boton.setAttribute('aria-selected', String(on));
+      s.boton.tabIndex = on ? 0 : -1;
+    });
+    actual = nombre;
+    document.title = solapas[nombre].titulo;
+    window.scrollTo(0, posicion[nombre] || 0);
+    if (enfocar) solapas[nombre].boton.focus();
+    try { history.replaceState(null, '', '#' + nombre); } catch(e) {}
+    pedir();
+  }
+
+  orden.forEach(function(k){
+    solapas[k].boton.addEventListener('click', function(){ mostrar(k); });
+  });
+  document.querySelector('.solapas').addEventListener('keydown', function(ev){
+    var i = orden.indexOf(actual), j = -1;
+    if (ev.key === 'ArrowRight') j = (i + 1) % orden.length;
+    else if (ev.key === 'ArrowLeft') j = (i - 1 + orden.length) % orden.length;
+    else if (ev.key === 'Home') j = 0;
+    else if (ev.key === 'End') j = orden.length - 1;
+    if (j > -1) { ev.preventDefault(); mostrar(orden[j], true); }
+  });
+  window.addEventListener('hashchange', function(){
+    mostrar(location.hash.replace('#',''));
+  });
+
+  var inicial = location.hash.replace('#','');
+  mostrar(solapas[inicial] ? inicial : 'antidoto');
+  window.addEventListener('load', function(){ setTimeout(pedir, 400); });
+})();
+</script>
+</body>
+</html>
